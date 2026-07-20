@@ -17,3 +17,4 @@ scikit-learn
 pytest
 SQLAlchemy
 psycopg2-binary
+gunicorn

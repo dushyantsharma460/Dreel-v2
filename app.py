@@ -183,19 +183,20 @@ def rate_reel():
     return redirect(url_for("gallery"))
 
 
+DEBUG = os.environ.get("FLASK_DEBUG") == "1"
+
+# Under `python app.py` with the debug reloader, this module loads twice
+# (parent watcher + WERKZEUG_RUN_MAIN child) - only start once, in the
+# child. This lives at module level (not inside `if __name__`) so it also
+# runs under gunicorn in production, where there's no reloader and DEBUG
+# is False, so the check passes on import.
+if not DEBUG or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+    init_db()
+    launch_worker()
+
 if __name__ == "__main__":
-    DEBUG = True
-
-    # app.debug is only set once app.run() executes, so checking it here
-    # (before app.run) always read False and launched the worker twice
-    # under the debug reloader (parent process + WERKZEUG_RUN_MAIN child).
-    # Using the DEBUG constant directly makes the guard correct.
-    if not DEBUG or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        init_db()
-        launch_worker()
-
     app.run(
         host="0.0.0.0",
-        port=4600,
+        port=int(os.environ.get("PORT", 4600)),
         debug=DEBUG,
     )

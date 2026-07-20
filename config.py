@@ -25,19 +25,28 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dreel-ai-v2-secret-key")
 # Project Folders
 # --------------------------------------------------
 
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
-
 STATIC_FOLDER = os.path.join(BASE_DIR, "static")
-
-REELS_FOLDER = os.path.join(STATIC_FOLDER, "reels")
 
 SONGS_FOLDER = os.path.join(STATIC_FOLDER, "songs")
 
 REPORTS_FOLDER = os.path.join(BASE_DIR, "reports")
 
-DATA_FOLDER = os.path.join(BASE_DIR, "data")
+# On a host with an ephemeral filesystem (e.g. Render), set PERSIST_DIR to
+# a mounted persistent disk so uploads/generated reels/datasets/model
+# survive restarts and redeploys. Left unset, everything stays under the
+# project directory exactly as before (local dev behavior unchanged).
+PERSIST_DIR = os.getenv("PERSIST_DIR", "")
 
-MODELS_FOLDER = os.path.join(BASE_DIR, "models")
+if PERSIST_DIR:
+    UPLOAD_FOLDER = os.path.join(PERSIST_DIR, "uploads")
+    REELS_FOLDER = os.path.join(PERSIST_DIR, "reels")
+    DATA_FOLDER = os.path.join(PERSIST_DIR, "data")
+    MODELS_FOLDER = os.path.join(PERSIST_DIR, "models")
+else:
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
+    REELS_FOLDER = os.path.join(STATIC_FOLDER, "reels")
+    DATA_FOLDER = os.path.join(BASE_DIR, "data")
+    MODELS_FOLDER = os.path.join(BASE_DIR, "models")
 
 # --------------------------------------------------
 # Allowed Extensions
