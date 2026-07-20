@@ -1,0 +1,294 @@
+{# Use this when you want to Generate only with AI #}
+{# 
+{% extends "base.html" %}
+
+{% block title %}Create New Project | DReel AI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/create.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="upload-section">
+    <div class="container">
+        <div class="upload-container">
+            <h2 class="upload-title">Create New Reel</h2>
+            <p>Upload your media files to get started</p>
+            
+            <form action="/create" method="post" enctype="multipart/form-data">
+                <div id="fileInputs">
+                    <div class="file-input-group">
+                        <input type="file" class="form-control file-input" name="file1" accept="video/*,audio/*">
+                        <input name="uuid" type="hidden" value="{{myid}}">
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-outline-light mt-2 add-file-btn" onclick="addFileInput()">
+                    <i class="fas fa-plus"></i> Add Another File
+                </button>
+                
+                <div class="mt-4">
+                    <textarea class="form-control text-input" name="text" placeholder="Add captions or lyrics (optional)"></textarea>
+                </div>
+                
+                <button type="submit" class="btn submit-btn mt-4">
+                    <i class="fas fa-magic"></i> Generate Reel
+                </button> 
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    function addFileInput() {
+        const container = document.getElementById('fileInputs');
+        const newInput = document.createElement('div');
+        newInput.className = 'file-input-group mt-2';
+        newInput.innerHTML = `<input type="file" class="form-control file-input" name="file${container.children.length + 1}" accept="video/*,audio/*">`;
+        container.appendChild(newInput);
+    }
+</script>
+{% endblock %}
+#}
+
+
+
+
+
+{% extends "base.html" %}
+
+{% block title %}Create New Project | DReel AI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/create.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="upload-section">
+    <div class="container">
+        <div class="upload-container">
+            <h2 class="upload-title">Create New Reel</h2>
+            <p>Upload your media files to get started</p>
+            
+            <form action="/create" method="post" enctype="multipart/form-data">
+                <input name="uuid" type="hidden" value="{{myid}}">
+
+                <div id="dropzone" class="dropzone">
+                    <i class="fas fa-cloud-upload-alt dropzone-icon"></i>
+                    <p class="dropzone-text">Drag &amp; drop images here, or <span class="dropzone-browse">browse</span></p>
+                    <small class="text-muted">Select as many images as you like in one go</small>
+                    <small id="imageCount" class="d-block mt-1"></small>
+                    <input type="file" id="imageFileInput" name="files" accept="image/*" multiple hidden>
+                </div>
+
+                <div id="imagePreview" class="image-preview-grid"></div>
+
+                <div class="mt-4 format-options">
+                    <h5>Video Format</h5>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="formatOption" id="formatAuto" value="auto" checked>
+                        <label class="form-check-label" for="formatAuto">
+                            Auto (detect from images)
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="formatOption" id="formatMobile" value="mobile">
+                        <label class="form-check-label" for="formatMobile">
+                            Mobile Reel (9:16)
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="formatOption" id="formatDesktop" value="desktop">
+                        <label class="form-check-label" for="formatDesktop">
+                            Desktop Video (16:9)
+                        </label>
+                    </div>
+                    <small class="text-muted d-block mt-2">
+                        Use Desktop for landscape images to avoid black bars above and below.
+                    </small>
+                    <small class="text-muted d-block mt-2">
+                        Images are analyzed for quality and auto-ranked before the reel is built.
+                    </small>
+                </div>
+                
+                <div class="mt-4 audio-options">
+                    <h5>Audio Options</h5>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="audioOption" id="aiAudio" value="ai" checked>
+                        <label class="form-check-label" for="aiAudio">
+                            Generate AI Audio from Text
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="audioOption" id="uploadAudio" value="upload">
+                        <label class="form-check-label" for="uploadAudio">
+                            Upload Your Own Audio
+                        </label>
+                    </div>
+                    
+                    <div id="aiAudioSection" class="mt-3">
+                        <textarea class="form-control text-input" name="text" placeholder="Add captions or lyrics for AI audio generation"></textarea>
+
+                        <div class="mt-3 voice-options">
+                            <label class="d-block mb-1">Narrator Voice</label>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="voiceGender" id="voiceAny" value="any" checked>
+                                <label class="form-check-label" for="voiceAny">Random</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="voiceGender" id="voiceFemale" value="female">
+                                <label class="form-check-label" for="voiceFemale">Woman</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="voiceGender" id="voiceMale" value="male">
+                                <label class="form-check-label" for="voiceMale">Man</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="voiceGender" id="voiceChild" value="child">
+                                <label class="form-check-label" for="voiceChild">Child</label>
+                            </div>
+                            <small class="text-muted d-block mt-1">
+                                Child voice is not available in an Indian accent — it falls back to a neutral English voice.
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div id="uploadAudioSection" class="mt-3" style="display: none;">
+                        <input type="file" class="form-control" name="audioFile" accept="audio/*">
+                        <small class="text-muted">Supported formats: MP3, WAV, AAC</small>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn submit-btn mt-4">
+                    <i class="fas fa-magic"></i> Generate Reel
+                </button> 
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('imageFileInput');
+        const preview = document.getElementById('imagePreview');
+        const countLabel = document.getElementById('imageCount');
+        const form = dropzone.closest('form');
+
+        let selectedFiles = [];
+
+        function fileKey(file) {
+            return `${file.name}_${file.size}_${file.lastModified}`;
+        }
+
+        function syncInput() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+        }
+
+        function renderPreview() {
+            preview.innerHTML = '';
+
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'image-preview-item';
+
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.onload = () => URL.revokeObjectURL(img.src);
+                item.appendChild(img);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'image-preview-remove';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.setAttribute('aria-label', 'Remove ' + file.name);
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectedFiles.splice(index, 1);
+                    syncInput();
+                    renderPreview();
+                });
+                item.appendChild(removeBtn);
+
+                const name = document.createElement('span');
+                name.className = 'image-preview-name';
+                name.textContent = file.name;
+                item.appendChild(name);
+
+                preview.appendChild(item);
+            });
+
+            countLabel.textContent = selectedFiles.length
+                ? `${selectedFiles.length} image${selectedFiles.length > 1 ? 's' : ''} selected`
+                : '';
+        }
+
+        function addFiles(fileList) {
+            const existingKeys = new Set(selectedFiles.map(fileKey));
+
+            Array.from(fileList).forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+                const key = fileKey(file);
+                if (existingKeys.has(key)) return;
+                existingKeys.add(key);
+                selectedFiles.push(file);
+            });
+
+            syncInput();
+            renderPreview();
+        }
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', () => addFiles(fileInput.files));
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.remove('dragover');
+            });
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            if (e.dataTransfer && e.dataTransfer.files) {
+                addFiles(e.dataTransfer.files);
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            if (selectedFiles.length === 0) {
+                e.preventDefault();
+                countLabel.textContent = 'Please select at least one image.';
+                countLabel.classList.add('text-danger');
+            }
+        });
+    })();
+
+    // Toggle between audio options
+    document.querySelectorAll('input[name="audioOption"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'ai') {
+                document.getElementById('aiAudioSection').style.display = 'block';
+                document.getElementById('uploadAudioSection').style.display = 'none';
+            } else {
+                document.getElementById('aiAudioSection').style.display = 'none';
+                document.getElementById('uploadAudioSection').style.display = 'block';
+            }
+        });
+    });
+</script>
+{% endblock %}

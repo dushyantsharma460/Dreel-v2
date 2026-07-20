@@ -1,0 +1,8 @@
+venv/
+.env
+__pycache__/
+*.pyc
+uploads/
+models/*.pkl
+static/reels/*.mp4
+.pytest_cache/

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Video Gallery | DReel AI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gallery.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="gallery-section">
+    <div class="container">
+        <h2 class="gallery-title">Video Gallery</h2>
+        <p class="gallery-subtitle mb-4">
+            Your AI-generated reels appear here automatically. Rate reels to improve the engagement prediction model.
+        </p>
+
+        {% if model_metrics and model_metrics.trained %}
+        <div class="model-banner">
+            <i class="fas fa-brain"></i>
+            <span>
+                ML Model active — R²: {{ model_metrics.train_r2 }},
+                MAE: {{ model_metrics.train_mae }},
+                {{ model_metrics.real_ratings }} real ratings
+            </span>
+        </div>
+        {% endif %}
+
+        {% if reels %}
+            {% if mobile_reels %}
+            <div class="gallery-format-section">
+                <h3 class="gallery-format-title">
+                    <i class="fas fa-mobile-alt"></i>
+                    Mobile Reels
+                    <span class="format-badge">9:16</span>
+                </h3>
+                <div class="gallery-grid gallery-grid--portrait">
+                    {% for reel in mobile_reels %}
+                        {% with reel=reel, wrapper_class='portrait' %}
+                            {% include '_reel_card.html' %}
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if desktop_reels %}
+            <div class="gallery-format-section">
+                <h3 class="gallery-format-title">
+                    <i class="fas fa-desktop"></i>
+                    Desktop Videos
+                    <span class="format-badge">16:9</span>
+                </h3>
+                <div class="gallery-grid gallery-grid--landscape">
+                    {% for reel in desktop_reels %}
+                        {% with reel=reel, wrapper_class='landscape' %}
+                            {% include '_reel_card.html' %}
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="empty-gallery text-center py-5">
+            <i class="fas fa-film fa-3x mb-3 empty-gallery-icon"></i>
+            <h4>No reels yet</h4>
+            <p>Create your first reel and it will show up here automatically.</p>
+            <a href="{{ url_for('create') }}" class="btn submit-btn mt-2">
+                <i class="fas fa-magic"></i> Create Reel
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% if processing %}
+<script>
+    setTimeout(function () {
+        window.location.href = "{{ url_for('gallery') }}";
+    }, 6000);
+</script>
+{% endif %}
+{% endblock %}

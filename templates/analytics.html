@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard | DReel AI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analytics.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="analytics-section">
+    <div class="container">
+        <div class="analytics-header">
+            <h2 class="analytics-title">Data Science Analytics</h2>
+            <p class="analytics-subtitle">
+                Live insights from audio signal processing and computer vision pipelines.
+            </p>
+        </div>
+
+        {% if not has_data %}
+        <div class="empty-analytics">
+            <i class="fas fa-chart-line fa-3x mb-3"></i>
+            <h4>No data yet</h4>
+            <p>Create a few reels first — metrics will appear here automatically.</p>
+            <a href="/create" class="btn submit-btn mt-2">Create Your First Reel</a>
+        </div>
+        {% else %}
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <span class="kpi-label">Total Reels</span>
+                <strong class="kpi-value">{{ summary.total_reels }}</strong>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Images Analyzed</span>
+                <strong class="kpi-value">{{ summary.total_images }}</strong>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Avg Tempo</span>
+                <strong class="kpi-value">{{ summary.avg_tempo }} <small>BPM</small></strong>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Avg Quality Score</span>
+                <strong class="kpi-value">{{ summary.avg_quality }}</strong>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Avg Reel Duration</span>
+                <strong class="kpi-value">{{ summary.avg_duration }}<small>s</small></strong>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Low Quality Images</span>
+                <strong class="kpi-value kpi-value--warn">{{ summary.low_quality_images }}</strong>
+            </div>
+        </div>
+
+        {% if charts %}
+        <div class="chart-grid">
+            {% for chart in charts %}
+            <div class="chart-card{% if chart.wide %} chart-card--wide{% endif %}">
+                <img
+                    src="{{ url_for('static', filename=chart.image) }}?v={{ summary.total_reels }}"
+                    alt="{{ chart.title }}"
+                    class="chart-image"
+                >
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if recent_reels %}
+        <div class="table-card">
+            <h3 class="table-title">Recent Reel Metrics</h3>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover analytics-table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Reel ID</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Images</th>
+                            <th scope="col">Tempo (BPM)</th>
+                            <th scope="col">Duration (s)</th>
+                            <th scope="col">Avg Quality</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reel in recent_reels %}
+                        <tr>
+                            <td>{{ reel.short_id }}...</td>
+                            <td>{{ reel.timestamp }}</td>
+                            <td>{{ reel.image_count }}</td>
+                            <td>{{ reel.tempo_bpm }}</td>
+                            <td>{{ reel.duration_sec }}</td>
+                            <td>
+                                {% if reel.avg_quality > 0 %}
+                                    {{ reel.avg_quality }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="dataset-links">
+            <h3 class="table-title">Raw Datasets</h3>
+            <p>CSV files used for notebooks and degree project analysis.</p>
+            <div class="dataset-badges">
+                <span class="dataset-badge"><i class="fas fa-file-csv"></i> data/audio_features.csv</span>
+                <span class="dataset-badge"><i class="fas fa-file-csv"></i> data/image_features.csv</span>
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

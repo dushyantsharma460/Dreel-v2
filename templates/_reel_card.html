@@ -1,0 +1,45 @@
+<div class="reel-item">
+    <div class="video-wrapper {{ wrapper_class }}">
+        <video
+            src="{{ url_for('reel_video', reel_id=reel.reel_id) }}"
+            controls
+            playsinline
+        ></video>
+    </div>
+
+    <div class="reel-meta">
+        <p class="reel-label mb-1 small">{{ reel.reel_id[:8] }}...</p>
+
+        {% if reel.predicted_score %}
+        <div class="engagement-prediction">
+            <span class="prediction-label">Predicted engagement</span>
+            <div class="prediction-bar">
+                <div class="prediction-fill" style="width: {{ reel.predicted_percent }}%;"></div>
+            </div>
+            <strong class="prediction-score">{{ reel.predicted_score }}/5</strong>
+        </div>
+        {% endif %}
+
+        <form class="rating-form" action="{{ url_for('rate_reel') }}" method="post">
+            <input type="hidden" name="reel_id" value="{{ reel.reel_id }}">
+            <span class="rating-label">
+                {% if reel.user_rating %}
+                    Your rating: {{ reel.user_rating }}/5
+                {% else %}
+                    Rate this reel:
+                {% endif %}
+            </span>
+            <div class="star-rating">
+                {% for star in range(1, 6) %}
+                <button
+                    type="submit"
+                    name="rating"
+                    value="{{ star }}"
+                    class="star-btn{% if reel.user_rating and star <= reel.user_rating %} is-active{% endif %}"
+                    title="Rate {{ star }} stars"
+                >★</button>
+                {% endfor %}
+            </div>
+        </form>
+    </div>
+</div>

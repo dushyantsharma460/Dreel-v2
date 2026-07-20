@@ -1,0 +1,190 @@
+.analytics-section {
+    padding: 4rem 0;
+}
+
+.analytics-header {
+    margin-bottom: 2rem;
+}
+
+.analytics-subtitle {
+    color: rgba(255, 255, 255, 0.82);
+    margin-bottom: 0;
+    font-size: 1.05rem;
+}
+
+.analytics-title {
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(106, 17, 203, 0.25);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.kpi-label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.65);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.kpi-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.1;
+}
+
+.kpi-value small {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.kpi-value--warn {
+    color: var(--accent);
+}
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    background: linear-gradient(180deg, rgba(26, 21, 56, 0.95), rgba(15, 12, 41, 0.98));
+    border: 1px solid rgba(106, 17, 203, 0.4);
+    border-radius: 14px;
+    padding: 0.65rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+}
+
+.chart-card--wide {
+    grid-column: 1 / -1;
+}
+
+.chart-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    background: #0f0c29;
+}
+
+.table-card,
+.dataset-links {
+    background: rgba(20, 16, 48, 0.9);
+    border: 1px solid rgba(106, 17, 203, 0.35);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.table-title {
+    color: var(--accent);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.dataset-links p {
+    color: rgba(255, 255, 255, 0.82);
+    margin-bottom: 1rem;
+}
+
+.analytics-table {
+    --bs-table-bg: transparent;
+    --bs-table-color: #f2f2f2;
+    --bs-table-border-color: rgba(106, 17, 203, 0.3);
+    --bs-table-hover-bg: rgba(106, 17, 203, 0.2);
+    --bs-table-hover-color: #ffffff;
+    color: #f2f2f2 !important;
+    background-color: transparent !important;
+    margin-bottom: 0;
+}
+
+.analytics-table thead th {
+    background-color: rgba(106, 17, 203, 0.35) !important;
+    color: #ffffff !important;
+    border-color: rgba(106, 17, 203, 0.45) !important;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.analytics-table tbody td {
+    color: #f5f5f5 !important;
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border-color: rgba(106, 17, 203, 0.2) !important;
+    vertical-align: middle;
+}
+
+.analytics-table tbody tr:hover td {
+    background-color: rgba(106, 17, 203, 0.18) !important;
+    color: #ffffff !important;
+}
+
+.dataset-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.dataset-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(106, 17, 203, 0.2);
+    border: 1px solid rgba(106, 17, 203, 0.35);
+    border-radius: 999px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.empty-analytics {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed rgba(106, 17, 203, 0.35);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.empty-analytics p {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+@media (max-width: 768px) {
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-card--wide {
+        grid-column: auto;
+    }
+
+    .analytics-table thead th,
+    .analytics-table tbody td {
+        font-size: 0.85rem;
+        padding: 0.55rem 0.45rem;
+    }
+}

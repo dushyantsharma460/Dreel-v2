@@ -1,0 +1,26 @@
+{
+  "trained": true,
+  "samples": 14,
+  "real_ratings": 6,
+  "proxy_ratings": 8,
+  "timestamp": "2026-07-20T12:01:18.422443+00:00",
+  "cv_folds": 5,
+  "cv_r2_mean": -70.5244,
+  "cv_r2_std": 129.8585,
+  "train_r2": 0.7942,
+  "train_mae": 0.3343,
+  "metrics_note": "train_r2/train_mae are in-sample fit on the training data itself, not a held-out score, and will look overly optimistic. cv_r2_mean/cv_r2_std (k-fold cross-validation, when available) are the more honest estimate of generalization. Both are high-variance with this few samples \u2014 collect more real user ratings before quoting either as final performance.",
+  "feature_importance": {
+    "image_count": 0.1272,
+    "duration_sec": 0.1229,
+    "tempo_bpm": 0.0374,
+    "beat_count": 0.0606,
+    "avg_energy": 0.178,
+    "avg_slide_duration": 0.0883,
+    "slide_std": 0.113,
+    "avg_quality": 0.0553,
+    "min_quality": 0.0562,
+    "blur_mean": 0.1612,
+    "low_quality_ratio": 0.0
+  }
+}
