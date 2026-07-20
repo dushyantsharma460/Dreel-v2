@@ -167,6 +167,23 @@ def log_audio_features(
     mirror_audio_features(row)
 
 
+def remove_audio_features(reel_id: str) -> None:
+    """Drop this reel's row from the audio-features CSV, if present."""
+
+    if not os.path.isfile(AUDIO_FEATURES_CSV):
+        return
+
+    with open(AUDIO_FEATURES_CSV, "r", newline="", encoding="utf-8") as csv_file:
+        reader = csv.DictReader(csv_file)
+        fieldnames = reader.fieldnames
+        rows = [row for row in reader if row.get("reel_id") != reel_id]
+
+    with open(AUDIO_FEATURES_CSV, "w", newline="", encoding="utf-8") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 def apply_beat_sync(upload_dir: str, reel_id: str) -> dict:
     """
     Rebuild FFmpeg input.txt using beat-synced slide durations.

@@ -8,6 +8,8 @@ Responsible for:
 """
 
 import os
+import re
+import shutil
 import time
 import subprocess
 
@@ -22,10 +24,13 @@ from config import (
 )
 
 from services.audio_service import text_to_speech_file
-from services.beat_service import apply_beat_sync
+from services.beat_service import apply_beat_sync, remove_audio_features
 from services.image_service import read_video_format, read_voice_gender
-from services.vision_service import apply_vision_pipeline
-from services.db_service import store_reel_file
+from services.vision_service import apply_vision_pipeline, remove_image_features
+from services.ml_service import remove_rating
+from services.db_service import store_reel_file, delete_reel_records
+
+REEL_ID_PATTERN = re.compile(r"^[A-Za-z0-9-]+$")
 
 
 DONE_FILE = os.path.join(UPLOAD_FOLDER, "done.txt")
@@ -184,6 +189,49 @@ def get_done_folders() -> list[str]:
 def mark_folder_done(folder: str) -> None:
     with open(DONE_FILE, "a", encoding="utf-8") as file:
         file.write(folder + "\n")
+
+
+def _unmark_folder_done(folder: str) -> None:
+    if not os.path.exists(DONE_FILE):
+        return
+
+    with open(DONE_FILE, "r", encoding="utf-8") as file:
+        remaining = [line for line in file.readlines() if line.strip() != folder]
+
+    with open(DONE_FILE, "w", encoding="utf-8") as file:
+        file.writelines(remaining)
+
+
+def delete_reel(reel_id: str) -> bool:
+    """
+    Remove a reel's video, its upload folder, and matching rows from the
+    CSV datasets / DB mirror. Returns False if reel_id is malformed or no
+    such reel exists.
+    """
+
+    if not reel_id or not REEL_ID_PATTERN.match(reel_id):
+        return False
+
+    video_path = os.path.join(REELS_FOLDER, f"{reel_id}.mp4")
+    upload_dir = os.path.join(UPLOAD_FOLDER, reel_id)
+
+    existed = os.path.isfile(video_path) or os.path.isdir(upload_dir)
+    if not existed:
+        return False
+
+    if os.path.isfile(video_path):
+        os.remove(video_path)
+
+    if os.path.isdir(upload_dir):
+        shutil.rmtree(upload_dir)
+
+    _unmark_folder_done(reel_id)
+    remove_audio_features(reel_id)
+    remove_image_features(reel_id)
+    remove_rating(reel_id)
+    delete_reel_records(reel_id)
+
+    return True
 
 
 def list_reels() -> list[dict]:

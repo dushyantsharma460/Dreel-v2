@@ -269,6 +269,31 @@
     margin-top: 0.75rem;
 }
 
+.reel-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.reel-label-row .reel-label {
+    margin-bottom: 0;
+}
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 77, 77, 0.65);
+    font-size: 0.9rem;
+    padding: 0.15rem 0.3rem;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.delete-btn:hover {
+    color: #ff4d4d;
+}
+
 .engagement-prediction {
     display: grid;
     grid-template-columns: 1fr auto;

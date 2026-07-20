@@ -17,7 +17,7 @@ from services.image_service import (
     save_voice_gender,
 )
 from config import VIDEO_FORMAT_DESKTOP, VIDEO_FORMAT_MOBILE, VOICE_GENDER_CHOICES
-from services.reel_service import list_reels, start_worker
+from services.reel_service import list_reels, start_worker, delete_reel
 from services.vision_service import get_quality_warnings
 from services.analytics_service import get_dashboard_context
 from services.ml_service import (
@@ -162,6 +162,18 @@ def reel_video(reel_id):
         abort(404)
 
     return send_from_directory(REELS_FOLDER, filename, conditional=True)
+
+
+@app.route("/delete-reel", methods=["POST"])
+def delete_reel_route():
+    reel_id = request.form.get("reel_id", "").strip()
+
+    if delete_reel(reel_id):
+        flash("Reel deleted.", "success")
+    else:
+        flash("Could not find that reel to delete.", "danger")
+
+    return redirect(url_for("gallery"))
 
 
 @app.route("/rate", methods=["POST"])

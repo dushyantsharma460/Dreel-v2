@@ -8,7 +8,20 @@
     </div>
 
     <div class="reel-meta">
-        <p class="reel-label mb-1 small">{{ reel.reel_id[:8] }}...</p>
+        <div class="reel-label-row">
+            <p class="reel-label mb-1 small">{{ reel.reel_id[:8] }}...</p>
+            <form
+                class="delete-form"
+                action="{{ url_for('delete_reel_route') }}"
+                method="post"
+                onsubmit="return confirm('Delete this reel? This cannot be undone.');"
+            >
+                <input type="hidden" name="reel_id" value="{{ reel.reel_id }}">
+                <button type="submit" class="delete-btn" title="Delete reel">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        </div>
 
         {% if reel.predicted_score %}
         <div class="engagement-prediction">

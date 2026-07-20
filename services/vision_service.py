@@ -206,6 +206,23 @@ def log_image_features(reel_id: str, analyzed_images: list[dict]) -> None:
     mirror_image_features(rows)
 
 
+def remove_image_features(reel_id: str) -> None:
+    """Drop this reel's rows from the image-features CSV, if present."""
+
+    if not os.path.isfile(IMAGE_FEATURES_CSV):
+        return
+
+    with open(IMAGE_FEATURES_CSV, "r", newline="", encoding="utf-8") as csv_file:
+        reader = csv.DictReader(csv_file)
+        fieldnames = reader.fieldnames
+        rows = [row for row in reader if row.get("reel_id") != reel_id]
+
+    with open(IMAGE_FEATURES_CSV, "w", newline="", encoding="utf-8") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 def apply_vision_pipeline(upload_dir: str, reel_id: str) -> dict:
     """
     Analyze images, reorder input.txt by quality, and log features.

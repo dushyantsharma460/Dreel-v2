@@ -195,6 +195,22 @@ def store_reel_files(reel_id: str, file_type: str, upload_dir: str, filenames: l
         store_reel_file(reel_id, file_type, filename, os.path.join(upload_dir, filename))
 
 
+def delete_reel_records(reel_id: str) -> None:
+    """Best-effort removal of every mirrored row for one reel_id."""
+
+    try:
+        with get_engine().begin() as conn:
+            for table in (
+                reel_files_table,
+                audio_features_table,
+                image_features_table,
+                engagement_ratings_table,
+            ):
+                conn.execute(table.delete().where(table.c.reel_id == reel_id))
+    except SQLAlchemyError as error:
+        print(f"[DB][WARN] delete_reel_records failed for {reel_id}: {error}")
+
+
 def get_reel_file(reel_id: str, file_type: str) -> dict | None:
     """Fetch one stored file's bytes + metadata, or None if not mirrored."""
 

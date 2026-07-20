@@ -138,6 +138,17 @@ def save_rating(reel_id: str, rating: int, source: str = "user") -> None:
     mirror_rating(row)
 
 
+def remove_rating(reel_id: str) -> None:
+    """Drop this reel's row from the ratings CSV, if present."""
+
+    if not os.path.isfile(RATINGS_CSV):
+        return
+
+    ratings = load_ratings()
+    ratings = ratings[ratings["reel_id"] != reel_id]
+    ratings.to_csv(RATINGS_CSV, index=False)
+
+
 def _proxy_engagement_score(features: pd.Series) -> float:
     """
     Bootstrap label for reels without user ratings.
