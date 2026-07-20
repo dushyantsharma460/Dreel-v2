@@ -140,6 +140,7 @@ def create_reel(folder: str) -> bool:
         "-vf",
         build_video_filter(width, height),
         "-c:v", "libx264",
+        "-threads", "1",
         "-c:a", "aac",
         "-shortest",
         "-r", "30",

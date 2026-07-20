@@ -23,10 +23,19 @@ MIN_SLIDE_DURATION = 0.5
 MAX_SLIDE_DURATION = 6.0
 
 
-def extract_audio_features(audio_path: str) -> dict:
-    """Extract tempo, beat count, duration, and energy from an audio file."""
+def _analyze_audio(audio_path: str) -> tuple[float, np.ndarray, dict]:
+    """
+    Load the audio and run beat/energy detection in one pass. Returns
+    (duration, beat_times, features) so callers needing both the feature
+    dict and the beat-synced durations don't each load + re-analyze the
+    same file — that used to happen on every reel and doubles audio-array
+    memory and CPU for no benefit.
+    """
 
-    y, sr = librosa.load(audio_path, sr=None)
+    # 22050 Hz keeps tempo/beat/RMS accuracy fine for this use case while
+    # roughly halving the in-memory sample array vs. a native 44.1/48kHz
+    # file (sr=None) — matters on memory-constrained hosts.
+    y, sr = librosa.load(audio_path, sr=22050)
     duration = float(librosa.get_duration(y=y, sr=sr))
 
     onset_env = librosa.onset.onset_strength(y=y, sr=sr)
@@ -40,15 +49,17 @@ def extract_audio_features(audio_path: str) -> dict:
     beat_times = librosa.frames_to_time(beat_frames, sr=sr)
     rms = librosa.feature.rms(y=y)
 
-    return {
+    features = {
         "duration_sec": round(duration, 3),
         "tempo_bpm": round(tempo, 2),
         "beat_count": int(len(beat_times)),
         "avg_energy": round(float(np.mean(rms)), 4),
     }
 
+    return duration, beat_times, features
 
-def compute_beat_sync_durations(audio_path: str, num_images: int) -> list[float]:
+
+def _allocate_durations(duration: float, beat_times: np.ndarray, num_images: int) -> list[float]:
     """
     Allocate per-image durations aligned to detected beats.
     Falls back to equal splits when beat detection is weak.
@@ -57,15 +68,8 @@ def compute_beat_sync_durations(audio_path: str, num_images: int) -> list[float]
     if num_images <= 0:
         return []
 
-    y, sr = librosa.load(audio_path, sr=None)
-    duration = float(librosa.get_duration(y=y, sr=sr))
-
     if duration <= 0:
         return [1.0] * num_images
-
-    onset_env = librosa.onset.onset_strength(y=y, sr=sr)
-    _, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
-    beat_times = librosa.frames_to_time(beat_frames, sr=sr)
 
     if len(beat_times) >= 2:
         candidates = np.unique(np.concatenate(([0.0], beat_times, [duration])))
@@ -89,6 +93,26 @@ def compute_beat_sync_durations(audio_path: str, num_images: int) -> list[float]
         durations = [round(value * scale, 3) for value in durations]
 
     return durations
+
+
+def extract_audio_features(audio_path: str) -> dict:
+    """Extract tempo, beat count, duration, and energy from an audio file."""
+
+    _, _, features = _analyze_audio(audio_path)
+    return features
+
+
+def compute_beat_sync_durations(audio_path: str, num_images: int) -> list[float]:
+    """
+    Allocate per-image durations aligned to detected beats.
+    Falls back to equal splits when beat detection is weak.
+    """
+
+    if num_images <= 0:
+        return []
+
+    duration, beat_times, _ = _analyze_audio(audio_path)
+    return _allocate_durations(duration, beat_times, num_images)
 
 
 def log_audio_features(
@@ -155,8 +179,8 @@ def apply_beat_sync(upload_dir: str, reel_id: str) -> dict:
     if not image_files:
         raise ValueError(f"No images found in input.txt for reel {reel_id}")
 
-    features = extract_audio_features(audio_path)
-    durations = compute_beat_sync_durations(audio_path, len(image_files))
+    duration, beat_times, features = _analyze_audio(audio_path)
+    durations = _allocate_durations(duration, beat_times, len(image_files))
 
     create_input_file(upload_dir, image_files, durations=durations)
     log_audio_features(
