@@ -31,10 +31,11 @@ SONGS_FOLDER = os.path.join(STATIC_FOLDER, "songs")
 
 REPORTS_FOLDER = os.path.join(BASE_DIR, "reports")
 
-# On a host with an ephemeral filesystem (e.g. Render), set PERSIST_DIR to
-# a mounted persistent disk so uploads/generated reels/datasets/model
-# survive restarts and redeploys. Left unset, everything stays under the
-# project directory exactly as before (local dev behavior unchanged).
+# On a host with an ephemeral filesystem, or when running via
+# docker-compose.yml (which sets this to /data, a named volume), set
+# PERSIST_DIR to a mounted persistent disk so uploads/generated
+# reels/datasets/model survive restarts and redeploys. Left unset,
+# everything stays under the project directory (local dev behavior).
 PERSIST_DIR = os.getenv("PERSIST_DIR", "")
 
 if PERSIST_DIR:
