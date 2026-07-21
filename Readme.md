@@ -4,6 +4,9 @@
 
 Data Science Degree Project — transforms uploaded photos into vertical/landscape video reels with beat-synced timing, image quality ranking, analytics dashboards, and engagement prediction.
 
+**Live demo:** https://later-distinction-disk-specifications.trycloudflare.com
+*(Self-hosted via `docker compose` + a Cloudflare Quick Tunnel — see [Deploy](#deploy-docker-compose--cloudflare-tunnel) below. Only reachable while the host machine is on and the tunnel is running; the URL changes on every tunnel restart, so this link may go stale.)*
+
 ---
 
 ## Features
