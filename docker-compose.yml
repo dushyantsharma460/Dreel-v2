@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    ports:
+      - "80:4600"
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - FLASK_DEBUG=0
+      - PERSIST_DIR=/data
+      - DATABASE_URL=postgresql+psycopg2://postgres:${POSTGRES_PASSWORD}@db:5432/dreel_ai
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY:-}
+      - ELEVENLABS_VOICE_ID=${ELEVENLABS_VOICE_ID:-}
+      - EDGE_TTS_VOICE=${EDGE_TTS_VOICE:-}
+    volumes:
+      - dreel_data:/data
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=dreel_ai
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - dreel_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  dreel_data:
+  dreel_pgdata:
